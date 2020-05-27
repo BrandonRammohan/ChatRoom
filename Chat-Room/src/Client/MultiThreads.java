@@ -13,17 +13,20 @@ public class MultiThreads extends Thread {
 	boolean exit=false;
 	public ClientData client;
 	public ChatRoomGUI chatGUI;
+	public Sauvegarde sauvegarde;
 	
 	public MultiThreads(Socket OurMultiSocket, ChatRoomGUI gui)
 	{
 		this.socket=OurMultiSocket;
 		this.client=new ClientData();
 		this.chatGUI=gui;
+		sauvegarde = new Sauvegarde() ;
 	}
 	public void ClientOutServerIn(String Text)
 	{
 		//write the line from console to server
 		try {
+			System.out.println("ClientOutServerIn");
 			if(Text.equals("change channel"))
 			{
 				System.out.print("sending changing channel: "+Text+"\n");
@@ -57,6 +60,9 @@ public class MultiThreads extends Thread {
 	public void run()
 	{
 		try {
+			System.out.println("run");
+			getSavedMessageAndDisplay();
+			sauvegarde.readInFile();
 			dataIn=new DataInputStream(socket.getInputStream());
 			dataOut=new DataOutputStream(socket.getOutputStream());
 			while(!exit)
@@ -94,6 +100,7 @@ public class MultiThreads extends Thread {
 					else
 					{
 						PrintReply(Chan,reply);
+						sauvegardeFichier(Chan, reply);
 					}
 					//System.out.println(reply);
 				} catch (IOException e) {
@@ -142,6 +149,16 @@ public class MultiThreads extends Thread {
 	{
 		String[]Y=X.split("=");
 		return Y[0];
+	}
+	
+	public void sauvegardeFichier(String chan, String Rep) {
+		String []Y=Rep.split("=");
+		sauvegarde.writeInFile(Y[1]);
+	}
+	
+	public void getSavedMessageAndDisplay() {
+		String oldMessages = sauvegarde.readInFile();
+		chatGUI.displaySavedMessaged(oldMessages);
 	}
 	
 	public void PrintReply(String Chan,String Rep)
