@@ -26,7 +26,7 @@ public class Client {
 	{	
 		ChatRoomGUI crape = new ChatRoomGUI();
 		crape.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		crape.setSize(500,600);
+		crape.setSize(600,600);
 		crape.setVisible(true);
 		/*try {
 			Socket s=new Socket("localhost",3333);

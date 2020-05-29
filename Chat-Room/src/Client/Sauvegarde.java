@@ -19,17 +19,29 @@ public class Sauvegarde {
 	public ChatRoomGUI GUI;
 	public BufferedWriter out;
 	public BufferedReader in;
+	public String fileName;
 
 
 	public Sauvegarde() {
-		this.fos =null ;
+		this.fileName = "save_channel0.txt" ;
+	}
+	
+	public void setfileName(String name) {
+		this.fileName = "save_"+name+".txt";
+	}
+	
+	public String getfileName() {
+		return fileName;
 	}
 
 	/************* WRITE ***************/
 	public void writeMessagesInFile(String results) {
+		
 		System.out.println("message "+results);
 		try  {
-			this.out = new BufferedWriter(new FileWriter("saveChat.txt", true));
+			System.out.println("in file");
+			this.out = new BufferedWriter(new FileWriter(this.getfileName(), true));
+			System.out.println("file created");
 			out.write(results+"\n");
 			out.close();	
 		} catch (IOException e) {
@@ -51,10 +63,12 @@ public class Sauvegarde {
 	}
 	
 	/************* READ ***************/
-	public String readMessagesInFile() {
+	public String readMessagesInFile(String file) {
+		System.out.println("file is 2 : " + file);
+		String readFile = file;
 		InputStream is;
 		try {
-			is = new FileInputStream("saveChat.txt");
+			is = new FileInputStream(file);
 			BufferedReader buf = new BufferedReader(new InputStreamReader(is)); 
 			String line;
 			try {
@@ -76,7 +90,7 @@ public class Sauvegarde {
 			e.printStackTrace();
 		} 
 
-		return "echec" ;
+		return "echec lors du rechargement de la conversation...\n \n" ;
 	}
 	
 	public String readUsersInFile() {
