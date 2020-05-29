@@ -1,9 +1,11 @@
 package Client;
 
+import java.awt.List;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public class MultiThreads extends Thread {
 	
@@ -22,11 +24,11 @@ public class MultiThreads extends Thread {
 		this.chatGUI=gui;
 		sauvegarde = new Sauvegarde() ;
 	}
+	
 	public void ClientOutServerIn(String Text)
 	{
 		//write the line from console to server
 		try {
-			System.out.println("ClientOutServerIn");
 			if(Text.equals("change channel"))
 			{
 				System.out.print("sending changing channel: "+Text+"\n");
@@ -38,11 +40,14 @@ public class MultiThreads extends Thread {
 				System.out.print("sending new user: "+ Text+"\n");
 				dataOut.writeUTF(Text+":"+client.GetName()+"="+client.GetChannel());
 				dataOut.flush();
+				sauvegarde.writeUsersInFile(client.GetName());
 			}
 			else
 			{
-				dataOut.writeUTF(client.GetChannel()+"="+this.getName()+": "+Text);
+				String message = client.GetChannel()+"="+this.getName()+": "+Text;
+				dataOut.writeUTF(message);
 				dataOut.flush();
+				sauvegardeFichier(message);
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -50,19 +55,19 @@ public class MultiThreads extends Thread {
 		}	
 	}
 	
-	public void SetClient(String channel,String Name)
-	{
+	public void SetClient(String channel,String Name) {
 		System.out.println('4');
 		client.SetName(Name);
 		client.SetChannel(channel);
+		client.addChannels(channel);
 	}
 	
-	public void run()
-	{
+	public void run() {
 		try {
-			System.out.println("run");
+			System.out.println("In Run");
+			chatGUI.autoCreateUser();
 			getSavedMessageAndDisplay();
-			sauvegarde.readInFile();
+			getSavedUsersAndDisplay();
 			dataIn=new DataInputStream(socket.getInputStream());
 			dataOut=new DataOutputStream(socket.getOutputStream());
 			while(!exit)
@@ -77,20 +82,9 @@ public class MultiThreads extends Thread {
 							e.printStackTrace();
 						}
 					}
-					//if there is something just show it on console
-					//and then go back and do the same
 					String reply=dataIn.readUTF();
-					//System.out.println("reply => "+ reply);
 					String Chan=ExtractChannel(reply);
-					//System.out.println("Chan => "+ Chan);
 					String name=ExtractName(reply);
-					//System.out.println("name :"+ name);
-					/*if (reply.equals("change channel"))
-					{
-						System.out.print("changing channel in body: "+reply+"\n");
-						//GUI.ClearDisplay();
-						setChangedChannel();
-					}*/
 					if(name.equals("new user"))
 					{
 						System.out.print("new user in body: "+reply+"\n");
@@ -100,9 +94,8 @@ public class MultiThreads extends Thread {
 					else
 					{
 						PrintReply(Chan,reply);
-						sauvegardeFichier(Chan, reply);
+						//System.out.print("Reply ==> "+reply+"\n");
 					}
-					//System.out.println(reply);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -129,6 +122,7 @@ public class MultiThreads extends Thread {
 			}
 		}
 	}
+
 	public void CloseClient()
 	{
 		try {
@@ -151,29 +145,46 @@ public class MultiThreads extends Thread {
 		return Y[0];
 	}
 	
-	public void sauvegardeFichier(String chan, String Rep) {
-		String []Y=Rep.split("=");
-		sauvegarde.writeInFile(Y[1]);
+	public void sauvegardeFichier(String Rep) {
+		if(!Rep.contentEquals("change channel")) {
+			System.out.println("in condition");
+			String []Y=Rep.split("=");
+			sauvegarde.writeMessagesInFile(Y[1]);
+		}
 	}
 	
 	public void getSavedMessageAndDisplay() {
-		String oldMessages = sauvegarde.readInFile();
+		String oldMessages = sauvegarde.readMessagesInFile();
 		chatGUI.displaySavedMessaged(oldMessages);
+	}
+	
+	private void getSavedUsersAndDisplay() {
+		String oldUsers = sauvegarde.readUsersInFile();
+		chatGUI.displaySavedUsers(oldUsers);
 	}
 	
 	public void PrintReply(String Chan,String Rep)
 	{
-		if(client.GetChannel().equals(Chan))
-		{
-			System.out.println("Rep => "+ Rep);
-			String []Y=Rep.split("=");
-			System.out.println("Y[1] => "+ Y[1]);
-			
-			chatGUI.setDisplay(Y[1]);
-			//System.out.println(Y[1]+"\n \n \n \n");
-		}
+//		if(client.GetChannel().equals(Chan))
+//		{
+//			System.out.println("Rep => "+ Rep);
+//			String []Y=Rep.split("=");
+//			System.out.println("Y[1] => "+ Y[1]);
+//			
+//			chatGUI.setDisplay(Y[1]);
+//		}
 		
+		for(String channel : client.channels) {
+			if(Chan.contentEquals(channel)) {
+				System.out.println("Rep => "+ Rep);
+				String []Y=Rep.split("=");
+				System.out.println("Y[1] => "+ Y[1]);
+				
+				chatGUI.setDisplay(Y[1]);
+			}
+		}	
 	}
+	
 	public void setChannel(String x)
 	{
 		String []Y=x.split(":");
@@ -181,30 +192,49 @@ public class MultiThreads extends Thread {
 		System.out.print("setting "+Z[0]+" channel to "+Z[1]+"\n");
 		chatGUI.setUserInChannel(Z[0]);
 	}
+	
 	public void setChangedChannel()
 	{
 		chatGUI.setUserInChannel(client.GetName()+": "+client.GetChannel());
 	}
+	
 	class ClientData
 	{
 		public String ClientName;
 		public String channel;
+		public ArrayList<String> channels = new ArrayList<String>();
+
 		
-		public void SetChannel(String Chan)
-		{
+		public void SetChannel(String Chan) {
 			channel=Chan;
 		}
-		public void SetName(String name)
-		{
+		
+		public void SetName(String name) {
 			ClientName=name;
 		}
-		public String GetChannel()
-		{
+		
+		public String GetChannel() {
 			return channel;
 		}
-		public String GetName()
-		{
+		
+		public String GetName() {
 			return ClientName;
+		}
+		
+		public void addChannels(String newChannel) {
+			channels.add(newChannel);
+			System.out.println("Channels : ");
+			for(String chan : channels) {
+				System.out.println(chan);
+			}
+		}
+		
+		public void removeChannels(String newChannel) {
+			channels.remove(newChannel);
+			System.out.println("Channels de " + this.GetName() + ": ");
+			for(String chan : channels) {
+				System.out.println(chan + "\n");
+			}
 		}
 	}
 	

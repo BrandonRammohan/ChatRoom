@@ -13,7 +13,7 @@ import java.util.Scanner;
 ///////////////////////////////////////
 
 @SuppressWarnings("serial")
-public class ChatRoomGUI extends JFrame{
+public class ChatRoomGUI extends JFrame {
 
 	private JTextField message;
 	private JTextField pseudo;
@@ -26,8 +26,8 @@ public class ChatRoomGUI extends JFrame{
 	private JLabel l_pseudo;
 	private final static String newline = "\n";
 
-	public ChatRoomGUI(){
-		super("WOW");
+	public ChatRoomGUI() {
+		super("Chat");
 		
 		setLayout(new FlowLayout());
 		
@@ -97,7 +97,6 @@ public class ChatRoomGUI extends JFrame{
 				message.setText("");
 			}
 			else if(event.getSource()==pseudo) {
-				System.out.println('1');
 				string=String.format("%s", event.getActionCommand());
 				if(string.matches("[0-9]*"))
 				{
@@ -108,7 +107,6 @@ public class ChatRoomGUI extends JFrame{
 				{
 					System.out.println(ClientThread);
 					ClientThread.setName(string);
-					System.out.println('3');
 					ClientThread.SetClient("channel0",string);
 					JOptionPane.showMessageDialog(null, "name has been set: "+string);
 					pseudo.setText("");
@@ -129,6 +127,7 @@ public class ChatRoomGUI extends JFrame{
 				else
 				{
 					ClientThread.client.SetChannel("channel"+string);
+					ClientThread.client.addChannels("channel"+string);
 					JOptionPane.showMessageDialog(null, "Channel has been set: channel"+string);
 					groupe.setText("");
 					ClientThread.ClientOutServerIn("change channel");
@@ -137,8 +136,7 @@ public class ChatRoomGUI extends JFrame{
 			//JOptionPane.showMessageDialog(null, string);
 		}
 	}
-	public void setDisplay(String x)
-	{
+	public void setDisplay(String x) {
 		conv.append(x + newline); 
 	}
 	
@@ -146,13 +144,19 @@ public class ChatRoomGUI extends JFrame{
 		conv.append(oldMessages);
 	}
 	
-	public void setUserInChannel(String x)
-	{
+	public void displaySavedUsers(String oldUsers) {
+		participants.append(oldUsers);
+	}
+	
+	public void setUserInChannel(String x) {
 		participants.append(x + newline);
 	}
 	
-	public void ClearDisplay()
-	{
+	public void ClearDisplay() {
 		participants.setText("");
+	}
+	
+	public void autoCreateUser() {
+		System.out.println("im here");
 	}
 }
