@@ -25,6 +25,7 @@ public class Sauvegarde {
 		this.fos =null ;
 	}
 
+	/************* WRITE ***************/
 	public void writeMessagesInFile(String results) {
 		System.out.println("message "+results);
 		try  {
@@ -49,6 +50,7 @@ public class Sauvegarde {
 		}
 	}
 	
+	/************* READ ***************/
 	public String readMessagesInFile() {
 		InputStream is;
 		try {
@@ -63,7 +65,6 @@ public class Sauvegarde {
 					line = buf.readLine(); 
 				} 
 				String fileAsString = sb.toString(); 
-				System.out.println("Contents (before Java 7) : " + fileAsString);
 				return fileAsString ;
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -92,7 +93,6 @@ public class Sauvegarde {
 					line = buf.readLine(); 
 				} 
 				String fileAsString = sb.toString(); 
-				System.out.println("Contents (before Java 7) : " + fileAsString);
 				//GUI.setDisplay("bonjour");
 				return fileAsString ;
 			} catch (IOException e) {
