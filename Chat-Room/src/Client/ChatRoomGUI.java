@@ -146,6 +146,10 @@ public class ChatRoomGUI extends JFrame{
 		conv.append(oldMessages);
 	}
 	
+	public void displaySavedUsers(String oldUsers) {
+		participants.append(oldUsers);
+	}
+	
 	public void setUserInChannel(String x)
 	{
 		participants.append(x + newline);

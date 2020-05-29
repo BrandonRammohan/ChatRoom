@@ -38,6 +38,7 @@ public class MultiThreads extends Thread {
 				System.out.print("sending new user: "+ Text+"\n");
 				dataOut.writeUTF(Text+":"+client.GetName()+"="+client.GetChannel());
 				dataOut.flush();
+				sauvegarde.writeUsersInFile(client.GetName());
 			}
 			else
 			{
@@ -62,7 +63,7 @@ public class MultiThreads extends Thread {
 		try {
 			System.out.println("run");
 			getSavedMessageAndDisplay();
-			sauvegarde.readInFile();
+			getSavedUsersAndDisplay();
 			dataIn=new DataInputStream(socket.getInputStream());
 			dataOut=new DataOutputStream(socket.getOutputStream());
 			while(!exit)
@@ -77,20 +78,9 @@ public class MultiThreads extends Thread {
 							e.printStackTrace();
 						}
 					}
-					//if there is something just show it on console
-					//and then go back and do the same
 					String reply=dataIn.readUTF();
-					//System.out.println("reply => "+ reply);
 					String Chan=ExtractChannel(reply);
-					//System.out.println("Chan => "+ Chan);
 					String name=ExtractName(reply);
-					//System.out.println("name :"+ name);
-					/*if (reply.equals("change channel"))
-					{
-						System.out.print("changing channel in body: "+reply+"\n");
-						//GUI.ClearDisplay();
-						setChangedChannel();
-					}*/
 					if(name.equals("new user"))
 					{
 						System.out.print("new user in body: "+reply+"\n");
@@ -102,7 +92,6 @@ public class MultiThreads extends Thread {
 						PrintReply(Chan,reply);
 						sauvegardeFichier(Chan, reply);
 					}
-					//System.out.println(reply);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -129,6 +118,7 @@ public class MultiThreads extends Thread {
 			}
 		}
 	}
+
 	public void CloseClient()
 	{
 		try {
@@ -153,12 +143,17 @@ public class MultiThreads extends Thread {
 	
 	public void sauvegardeFichier(String chan, String Rep) {
 		String []Y=Rep.split("=");
-		sauvegarde.writeInFile(Y[1]);
+		sauvegarde.writeMessagesInFile(Y[1]);
 	}
 	
 	public void getSavedMessageAndDisplay() {
-		String oldMessages = sauvegarde.readInFile();
+		String oldMessages = sauvegarde.readMessagesInFile();
 		chatGUI.displaySavedMessaged(oldMessages);
+	}
+	
+	private void getSavedUsersAndDisplay() {
+		String oldUsers = sauvegarde.readUsersInFile();
+		chatGUI.displaySavedUsers(oldUsers);
 	}
 	
 	public void PrintReply(String Chan,String Rep)
@@ -170,10 +165,10 @@ public class MultiThreads extends Thread {
 			System.out.println("Y[1] => "+ Y[1]);
 			
 			chatGUI.setDisplay(Y[1]);
-			//System.out.println(Y[1]+"\n \n \n \n");
 		}
 		
 	}
+	
 	public void setChannel(String x)
 	{
 		String []Y=x.split(":");
@@ -181,10 +176,12 @@ public class MultiThreads extends Thread {
 		System.out.print("setting "+Z[0]+" channel to "+Z[1]+"\n");
 		chatGUI.setUserInChannel(Z[0]);
 	}
+	
 	public void setChangedChannel()
 	{
 		chatGUI.setUserInChannel(client.GetName()+": "+client.GetChannel());
 	}
+	
 	class ClientData
 	{
 		public String ClientName;

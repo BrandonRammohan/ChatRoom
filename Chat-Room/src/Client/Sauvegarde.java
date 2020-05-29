@@ -25,8 +25,8 @@ public class Sauvegarde {
 		this.fos =null ;
 	}
 
-	public void writeInFile(String results) {
-		System.out.println("wsh "+results);
+	public void writeMessagesInFile(String results) {
+		System.out.println("message "+results);
 		try  {
 			this.out = new BufferedWriter(new FileWriter("saveChat.txt", true));
 			out.write(results+"\n");
@@ -37,11 +37,51 @@ public class Sauvegarde {
 		}
 	}
 	
-	public String readInFile() {
-
+	public void writeUsersInFile(String user) {
+		System.out.println("user "+user);
+		try  {
+			this.out = new BufferedWriter(new FileWriter("saveUsers.txt", true));
+			out.write(user+"\n");
+			out.close();	
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public String readMessagesInFile() {
 		InputStream is;
 		try {
 			is = new FileInputStream("saveChat.txt");
+			BufferedReader buf = new BufferedReader(new InputStreamReader(is)); 
+			String line;
+			try {
+				line = buf.readLine();
+				StringBuilder sb = new StringBuilder(); 
+				while(line != null){ 
+					sb.append(line).append("\n"); 
+					line = buf.readLine(); 
+				} 
+				String fileAsString = sb.toString(); 
+				System.out.println("Contents (before Java 7) : " + fileAsString);
+				return fileAsString ;
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} 
+
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+
+		return "echec" ;
+	}
+	
+	public String readUsersInFile() {
+		InputStream is;
+		try {
+			is = new FileInputStream("saveUsers.txt");
 			BufferedReader buf = new BufferedReader(new InputStreamReader(is)); 
 			String line;
 			try {
@@ -66,6 +106,6 @@ public class Sauvegarde {
 		} 
 
 		return "echec" ;
-		//GUI.setDisplay();
 	}
+	
 } 
