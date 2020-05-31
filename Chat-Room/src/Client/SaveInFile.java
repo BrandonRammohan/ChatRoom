@@ -13,45 +13,39 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-public class Sauvegarde {
+public class SaveInFile {
 
-	public FileOutputStream fos ;
-	public ChatRoomGUI GUI;
 	public BufferedWriter out;
 	public BufferedReader in;
-	public String fileName;
-	public String fileUser ;
+	public String fileGroup;
+	public String filePseudo;
 
-
-
-	public Sauvegarde() {
-		this.fileName = "save_channel0.txt" ;
-		this.fileUser = "users-channel0.txt";
-
+	public SaveInFile() {
+		this.fileGroup = "save_channel0.txt" ;
+		this.filePseudo = "users-channel0.txt";
 	}
 	
-	public void setfileName(String name) {
-		this.fileName = "save_"+name+".txt";
+	public void setFileGroup(String name) {
+		this.fileGroup = "save_"+name+".txt";
 	}
 	
 	public void setfileUser(String user) {
-		this.fileUser = "user_"+user+".txt";
+		this.filePseudo = "user_"+user+".txt";
 	}
 	
 	public String getfileUser() {
-		return fileUser;
+		return filePseudo;
 	}
 	
-	
 	public String getfileName() {
-		return fileName;
+		return fileGroup;
 	}
 
 	/************* WRITE ***************/
-	public void writeMessagesInFile(String results) {
+	public void writeMessagesInFile(String message) {
 		try  {
 			this.out = new BufferedWriter(new FileWriter(this.getfileName(), true));
-			out.write(results+"\n");
+			out.write(message+"\n");
 			out.close();	
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -61,7 +55,6 @@ public class Sauvegarde {
 	
 	public void writeUsersInFile(String user, String group) {
 		try  {
-			System.out.print("String group = " + group);
 			BufferedWriter out = new BufferedWriter(new FileWriter("users-" +group+".txt", true));
 			out.write(user +"\n");
 			out.close();
@@ -72,11 +65,10 @@ public class Sauvegarde {
 	}
 
 	/************* READ ***************/
-	public String readMessagesInFile(String file) {
-		String readFile = file;
+	public String readMessagesInFile(String fileMessage) {
 		InputStream is;
 		try {
-			is = new FileInputStream(file);
+			is = new FileInputStream(fileMessage);
 			BufferedReader buf = new BufferedReader(new InputStreamReader(is)); 
 			String line;
 			try {
@@ -115,7 +107,6 @@ public class Sauvegarde {
 					line = buf.readLine(); 
 				} 
 				String fileAsString = sb.toString(); 
-				//GUI.setDisplay("bonjour");
 				return fileAsString ;
 			} catch (IOException e) {
 				// TODO Auto-generated catch block

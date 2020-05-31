@@ -11,10 +11,10 @@ public class HostConnexions extends Thread {
 	Socket socket;
 	DataInputStream dataIn;
 	DataOutputStream dataOut;
-	Serveur server;
+	ServeurLaunch server;
 	boolean exit=false;
 	
-	public HostConnexions(Socket OurSocket,Serveur OurServer)
+	public HostConnexions(Socket OurSocket,ServeurLaunch OurServer)
 	{
 		super("HostConnexions");//server connection thread
 		this.socket=OurSocket;
@@ -53,7 +53,7 @@ public class HostConnexions extends Thread {
 				while(dataIn.available()==0)
 				{
 					try {
-						Thread.sleep(1);//sleep if there is not data coming
+						Thread.sleep(1);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
