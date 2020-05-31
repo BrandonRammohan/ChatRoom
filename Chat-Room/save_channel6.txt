@@ -1,12 +1,3 @@
-Brandon: re
-c moi: cc
-hey: trql ?
-c moi: cava et toi
-Brandon: wsh
-Imabe: salut
-branodn: hein
-imane: quoi ?
-branodn: il a rien
-imane: de ouf
-branodn: on repart
-imane: okk
+Brandon: Wsh
+Zacharo des Kainris: bine ou quoi
+hello: wsh tout le monde

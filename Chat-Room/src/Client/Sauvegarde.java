@@ -20,15 +20,28 @@ public class Sauvegarde {
 	public BufferedWriter out;
 	public BufferedReader in;
 	public String fileName;
+	public String fileUser ;
+
 
 
 	public Sauvegarde() {
 		this.fileName = "save_channel0.txt" ;
+		this.fileUser = "users-channel0.txt";
+
 	}
 	
 	public void setfileName(String name) {
 		this.fileName = "save_"+name+".txt";
 	}
+	
+	public void setfileUser(String user) {
+		this.fileUser = "user_"+user+".txt";
+	}
+	
+	public String getfileUser() {
+		return fileUser;
+	}
+	
 	
 	public String getfileName() {
 		return fileName;
@@ -36,12 +49,8 @@ public class Sauvegarde {
 
 	/************* WRITE ***************/
 	public void writeMessagesInFile(String results) {
-		
-		System.out.println("message "+results);
 		try  {
-			System.out.println("in file");
 			this.out = new BufferedWriter(new FileWriter(this.getfileName(), true));
-			System.out.println("file created");
 			out.write(results+"\n");
 			out.close();	
 		} catch (IOException e) {
@@ -50,21 +59,20 @@ public class Sauvegarde {
 		}
 	}
 	
-	public void writeUsersInFile(String user) {
-		System.out.println("user "+user);
+	public void writeUsersInFile(String user, String group) {
 		try  {
-			this.out = new BufferedWriter(new FileWriter("saveUsers.txt", true));
-			out.write(user+"\n");
-			out.close();	
+			System.out.print("String group = " + group);
+			BufferedWriter out = new BufferedWriter(new FileWriter("users-" +group+".txt", true));
+			out.write(user +"\n");
+			out.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	
+
 	/************* READ ***************/
 	public String readMessagesInFile(String file) {
-		System.out.println("file is 2 : " + file);
 		String readFile = file;
 		InputStream is;
 		try {
@@ -90,13 +98,13 @@ public class Sauvegarde {
 			e.printStackTrace();
 		} 
 
-		return "echec lors du rechargement de la conversation...\n \n" ;
+		return "" ;
 	}
 	
-	public String readUsersInFile() {
+	public String readUsersInFile(String fileUser) {
 		InputStream is;
 		try {
-			is = new FileInputStream("saveUsers.txt");
+			is = new FileInputStream(fileUser);
 			BufferedReader buf = new BufferedReader(new InputStreamReader(is)); 
 			String line;
 			try {
@@ -119,7 +127,7 @@ public class Sauvegarde {
 			e.printStackTrace();
 		} 
 
-		return "echec" ;
+		return "" ;
 	}
 	
 } 

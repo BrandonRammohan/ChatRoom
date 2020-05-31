@@ -144,6 +144,7 @@ public class ChatRoomGUI extends JFrame {
 					l_pseudo.setVisible(false);
 				}
 			}
+			
 			else if(event.getSource()==groupe) {
 				string=String.format("%s", event.getActionCommand());
 				if(string.matches("[a-z A-Z]"))
@@ -154,6 +155,7 @@ public class ChatRoomGUI extends JFrame {
 				else
 				{
 					ClientThread.client.SetChannel("channel"+string);
+					ClientThread.client.setChannelSelected("channel"+string);
 					ClientThread.client.addChannels("channel"+string);
 					
 					JOptionPane.showMessageDialog(null, "Channel has been set: channel"+string);
@@ -174,10 +176,9 @@ public class ChatRoomGUI extends JFrame {
 			    Object source = event.getSource();
 		        JButton btn = (JButton)source;
 				string = btn.getText();
+				System.out.println("String -> " + string);
 
-				System.out.println("ca marche : "+ string);
 				ClientThread.client.setChannelSelected(string);
-				System.out.println("Nouvelle channel : " + ClientThread.client.getChannelSelected());
 
 				ClientThread.ClientOutServerIn("button selected : "+string);
 			}
