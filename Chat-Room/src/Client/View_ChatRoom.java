@@ -6,34 +6,32 @@ import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
-import java.net.Socket;//this is the socket package
-/*dont under any circumstance remove this import XD*/
+import java.net.Socket;
+
 import java.net.UnknownHostException;
-///////////////////////////////////////
-//our scanner import
+
 import java.util.Scanner;
 import net.miginfocom.swing.MigLayout;
-///////////////////////////////////////
 
 @SuppressWarnings("serial")
-public class ChatRoomGUI extends JFrame {
+public class View_ChatRoom extends JFrame {
 
-	private JTextField message;
+	private JPanel panel;
 	private JTextField pseudo;
+	private JTextField message;
 	private JTextField groupe;
 	private JTextArea conv;
 	private JTextArea participants;
-	private JTextArea conversations;
+	//private JTextArea conversations;
 	private Container chat;
-	MultiThreads ClientThread;
+	Controller_Thread clientThread;
+	public Model_ClientData client;
 	private JLabel l_groupe;
 	private JLabel l_pseudo;
-	private final static String newline = "\n";
-	private JPanel panel;
 	private JButton buttonGeneric;
 	private JButton buttonGroup;
 
-	public ChatRoomGUI() {	
+	public View_ChatRoom() {	
 		super("Chat");
 		
 		getContentPane().setLayout(new FlowLayout());
@@ -90,10 +88,11 @@ public class ChatRoomGUI extends JFrame {
 		message.addActionListener(handler);
 		pseudo.addActionListener(handler); 
 		groupe.addActionListener(handler);
+		
 		try {
-			Socket s = new Socket("localhost",3333);
-			this.ClientThread = new MultiThreads(s,this);
-			ClientThread.start();
+			Socket socket = new Socket("localhost",3333);
+			this.clientThread = new Controller_Thread(socket,this);
+			clientThread.start();
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -104,8 +103,8 @@ public class ChatRoomGUI extends JFrame {
 	}	
 
 	private class thehandler implements ActionListener{
+		
 		public void actionPerformed(ActionEvent event){
-
 			String string = "";
 			thehandler handlerButton = new thehandler();
 
@@ -113,7 +112,7 @@ public class ChatRoomGUI extends JFrame {
 			{
 				string=String.format("%s", event.getActionCommand());
 				String text= message.getText();
-				ClientThread.ClientOutServerIn(text);
+				clientThread.sendDataClientToServer(text);
 				message.setText("");
 			}
 			else if(event.getSource()==pseudo) {
@@ -125,10 +124,12 @@ public class ChatRoomGUI extends JFrame {
 				}
 				else
 				{
-					ClientThread.setName(string);
-					ClientThread.SetClient("channel0",string);
-					ClientThread.client.setChannelSelected("channel0");
-
+					//Set the NAME of the THREAD
+					clientThread.setName(string);
+					
+					clientThread.setClient("channel0",string);
+										
+					clientThread.call_setChannelSelected("channel0");
 					
 					JOptionPane.showMessageDialog(null, "name has been set: "+string);
 					
@@ -136,11 +137,11 @@ public class ChatRoomGUI extends JFrame {
 					buttonGeneric.addActionListener(handlerButton);
 					panel.add(buttonGeneric);
 					
-					pseudo.setText("");
+					//pseudo.setText("");
 					pseudo.setEditable(false);
 					message.setEditable(true);
 					groupe.setEditable(true);
-					ClientThread.ClientOutServerIn("new user");
+					clientThread.sendDataClientToServer("new user");
 					l_pseudo.setVisible(false);
 				}
 			}
@@ -154,12 +155,13 @@ public class ChatRoomGUI extends JFrame {
 				}
 				else
 				{
-					ClientThread.client.SetChannel("channel"+string);
-					ClientThread.client.setChannelSelected("channel"+string);
-					ClientThread.client.addChannels("channel"+string);
+					clientThread.call_setChannel("channel"+string);
+					
+					clientThread.call_setChannelSelected("channel"+string);
+
+					clientThread.call_addChannels("channel"+string);
 					
 					JOptionPane.showMessageDialog(null, "Channel has been set: channel"+string);
-					//conversations.append("channel"+string + newline);
 					
 					buttonGroup = new JButton("channel"+string);
 					buttonGroup.addActionListener(handlerButton);
@@ -168,7 +170,7 @@ public class ChatRoomGUI extends JFrame {
 					panel.revalidate();
 					groupe.setText("");
 					
-					ClientThread.ClientOutServerIn("change channel");
+					clientThread.sendDataClientToServer("change channel");
 				}
 			}
 			
@@ -178,15 +180,15 @@ public class ChatRoomGUI extends JFrame {
 				string = btn.getText();
 				System.out.println("String -> " + string);
 
-				ClientThread.client.setChannelSelected(string);
+				clientThread.call_setChannelSelected(string);
 
-				ClientThread.ClientOutServerIn("button selected : "+string);
+				clientThread.sendDataClientToServer("button selected : "+string);
 			}
 		}
 	}
 	
 	public void setDisplay(String x) {
-		conv.append(x + newline); 
+		conv.append(x + "\n"); 
 	}
 	
 	public void displaySavedMessaged(String recordedMessages) {
@@ -199,18 +201,15 @@ public class ChatRoomGUI extends JFrame {
 	}
 	
 	public void setUserInChannel(String x) {
-		participants.append(x + newline);
+		participants.append(x + "\n");
 	}
 	
 	public void clearChat() {
 		conv.setText("");
 	}
 	
-	public void ClearDisplay() {
+	public void clearDisplay() {
 		participants.setText("");
 	}
-	
-	public void autoCreateUser() {
-		System.out.println("im here");
-	}
+
 }
