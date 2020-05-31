@@ -203,11 +203,16 @@ public class MultiThreads extends Thread {
 		public String ClientName;
 		public String channel;
 		public ArrayList<String> channels = new ArrayList<String>();
+		public String channelSelected;
 
+		public void setChannelSelected(String channel) {
+			channelSelected=channel;
+		}
 		
 		public void SetChannel(String Chan) {
 			channel=Chan;
 		}
+	
 		
 		public void SetName(String name) {
 			ClientName=name;
