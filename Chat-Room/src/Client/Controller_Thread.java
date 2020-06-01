@@ -30,7 +30,7 @@ public class Controller_Thread extends Thread {
 	public void sendDataClientToServer(String data) {
 		try {
 			
-			if(data.equals("change channel"))
+			if(data.equals("switch group"))
 			{
 				dataOut.writeUTF(data);
 				dataOut.flush();
@@ -42,8 +42,9 @@ public class Controller_Thread extends Thread {
 				dataOut.flush();
 				sauvegarde.writeUsersInFile(modelClient.getName(), modelClient.getGroupSelected());
 			}
-			else if(data.matches("button selected : (.*)"))
+			else if(data.matches("group selected : (.*)"))
 			{
+				
 				dataOut.writeUTF(data);
 				dataOut.flush();
 				
@@ -70,9 +71,7 @@ public class Controller_Thread extends Thread {
 	
 	public void run() {
 		try {
-			
-			System.out.println("In Run");
-			
+				
 			displayGenericChat();
 			displayGenericUser();
 			
@@ -95,10 +94,6 @@ public class Controller_Thread extends Thread {
 					String reply = dataIn.readUTF();
 					String pseudoReply = extractPseudoFromReply(reply);
 					String groupReply = extractGroupFromReply(reply);
-					
-					if(reply.matches("button selected : (.*)")) {
-						System.out.println("in button server : " + reply);
-					}
 					
 					if(pseudoReply.equals("new user")) {
 						addNewUserinGroup(reply);
@@ -142,16 +137,20 @@ public class Controller_Thread extends Thread {
 		modelClient.addInListGroup(newGroup);
 	}
 
-	public void call_setChannelSelected(String newChannelSelected) {
-		modelClient.setGroupSelected(newChannelSelected);
+	public void call_setChannelSelected(String newGroupSelected) {
+		modelClient.setGroupSelected(newGroupSelected);
 	}
 	
-	public void call_setChannel(String newChannel) {
-		modelClient.setGroup(newChannel);
+	public void call_setChannel(String newGroup) {
+		modelClient.setGroup(newGroup);
 	}
 	
-	public void call_addChannels(String newChannel) {
-		modelClient.addInListGroup(newChannel);
+	public void call_addChannels(String newGroup) {
+		modelClient.addInListGroup(newGroup);
+	}
+	
+	public Boolean call_checkExistingGroup(String group) {
+		return modelClient.checkExistingGroup(group);
 	}
 	
 /**********************************************************/
@@ -195,7 +194,7 @@ public class Controller_Thread extends Thread {
 	}
 	
 	public void saveMessageInFile(String newMessage) {
-		if(!newMessage.contentEquals("change channel")) {
+		if(!newMessage.contentEquals("switch group")) {
 			String[] splitMessage = newMessage.split("=");
 			sauvegarde.writeMessagesInFile(splitMessage[1]);
 		}
@@ -203,13 +202,13 @@ public class Controller_Thread extends Thread {
 	
 	// Display Messages from the General group
 	public void displayGenericChat() {
-		String oldMessages = sauvegarde.readMessagesInFile("save_channel0.txt");
+		String oldMessages = sauvegarde.readMessagesInFile("messages-Général.txt");
 		viewChat.displaySavedMessaged(oldMessages);
 	}
 	
 	// Display the list of Users from the General group
 	private void displayGenericUser() {
-		String oldUsers = sauvegarde.readUsersInFile("users-channel0.txt");
+		String oldUsers = sauvegarde.readUsersInFile("users-Général.txt");
 		viewChat.displaySavedUsers(oldUsers);
 	}
 	
@@ -217,7 +216,7 @@ public class Controller_Thread extends Thread {
 	private void displayMessagesPerGroup(String groupSelected) {
 		viewChat.clearChat();
 		String[] splitGroup = groupSelected.split(": ");
-		String messages = sauvegarde.readMessagesInFile("save_"+splitGroup[1]+".txt");
+		String messages = sauvegarde.readMessagesInFile("messages-"+splitGroup[1]+".txt");
 		viewChat.displaySavedMessaged(messages);
 	}
 	

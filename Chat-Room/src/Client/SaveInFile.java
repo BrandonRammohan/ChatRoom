@@ -21,16 +21,16 @@ public class SaveInFile {
 	public String filePseudo;
 
 	public SaveInFile() {
-		this.fileGroup = "save_channel0.txt" ;
-		this.filePseudo = "users-channel0.txt";
+		this.fileGroup = "messages-Général.txt" ;
+		this.filePseudo = "users-Général.txt";
 	}
 	
-	public void setFileGroup(String name) {
-		this.fileGroup = "save_"+name+".txt";
+	public void setFileGroup(String groupName) {
+		this.fileGroup = "messages-"+groupName+".txt";
 	}
 	
-	public void setfileUser(String user) {
-		this.filePseudo = "user_"+user+".txt";
+	public void setfileUser(String groupName) {
+		this.filePseudo = "user-"+groupName+".txt";
 	}
 	
 	public String getfileUser() {
@@ -55,7 +55,7 @@ public class SaveInFile {
 	
 	public void writeUsersInFile(String user, String group) {
 		try  {
-			BufferedWriter out = new BufferedWriter(new FileWriter("users-" +group+".txt", true));
+			BufferedWriter out = new BufferedWriter(new FileWriter("users-"+group+".txt", true));
 			out.write(user +"\n");
 			out.close();
 		} catch (IOException e) {

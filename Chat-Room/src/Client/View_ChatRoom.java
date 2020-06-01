@@ -119,7 +119,7 @@ public class View_ChatRoom extends JFrame {
 				string=String.format("%s", event.getActionCommand());
 				if(string.matches("[0-9]*"))
 				{
-					JOptionPane.showMessageDialog(null,"formate not allowed");
+					JOptionPane.showMessageDialog(null,"Votre pseudo ne peut pas débuter votre pseudo par un chiffre !");
 					pseudo.setText("");
 				}
 				else
@@ -127,17 +127,15 @@ public class View_ChatRoom extends JFrame {
 					//Set the NAME of the THREAD
 					clientThread.setName(string);
 					
-					clientThread.setClient("channel0",string);
-										
-					clientThread.call_setChannelSelected("channel0");
+					clientThread.setClient("Général",string);
+					clientThread.call_setChannelSelected("Général");
 					
-					JOptionPane.showMessageDialog(null, "name has been set: "+string);
+					JOptionPane.showMessageDialog(null, "Vous êtes connecté en tant que : "+string);
 					
-					buttonGeneric = new JButton("channel0");
+					buttonGeneric = new JButton("Général");
 					buttonGeneric.addActionListener(handlerButton);
 					panel.add(buttonGeneric);
 					
-					//pseudo.setText("");
 					pseudo.setEditable(false);
 					message.setEditable(true);
 					groupe.setEditable(true);
@@ -148,29 +146,36 @@ public class View_ChatRoom extends JFrame {
 			
 			else if(event.getSource()==groupe) {
 				string=String.format("%s", event.getActionCommand());
-				if(string.matches("[a-z A-Z]"))
+				if(string.matches("[0-9]*"))
 				{
-					JOptionPane.showMessageDialog(null,"formate not allowed");
+					JOptionPane.showMessageDialog(null,"Le nom du groupe ne peut pas débuter un chiffre !");
 					groupe.setText("");
 				}
 				else
 				{
-					clientThread.call_setChannel("channel"+string);
+					Boolean check = clientThread.call_checkExistingGroup(string);
 					
-					clientThread.call_setChannelSelected("channel"+string);
+					if(check == true) {
+						JOptionPane.showMessageDialog(null,"Le groupe \""+string+"\" a déjà été crée !");
+						groupe.setText("");
+					}
+					
+					else {
+						clientThread.call_setChannel(string);
+						clientThread.call_setChannelSelected(string);
+						clientThread.call_addChannels(string);
+						
+						JOptionPane.showMessageDialog(null, "Le groupe \""+string+"\" a été crée");
 
-					clientThread.call_addChannels("channel"+string);
-					
-					JOptionPane.showMessageDialog(null, "Channel has been set: channel"+string);
-					
-					buttonGroup = new JButton("channel"+string);
-					buttonGroup.addActionListener(handlerButton);
-					panel.add(buttonGroup);
-					
-					panel.revalidate();
-					groupe.setText("");
-					
-					clientThread.sendDataClientToServer("change channel");
+						buttonGroup = new JButton(string);
+						buttonGroup.addActionListener(handlerButton);
+						panel.add(buttonGroup);
+						
+						panel.revalidate();
+						groupe.setText("");
+						
+						clientThread.sendDataClientToServer("switch group");
+					}	
 				}
 			}
 			
@@ -178,11 +183,9 @@ public class View_ChatRoom extends JFrame {
 			    Object source = event.getSource();
 		        JButton btn = (JButton)source;
 				string = btn.getText();
-				System.out.println("String -> " + string);
-
+				
 				clientThread.call_setChannelSelected(string);
-
-				clientThread.sendDataClientToServer("button selected : "+string);
+				clientThread.sendDataClientToServer("group selected : "+string);
 			}
 		}
 	}

@@ -34,12 +34,21 @@ public class Model_ClientData
 		return groupSelected;
 	}
 	
-	public void addInListGroup(String newChannel) {
-		listGroup.add(newChannel);
+	public void addInListGroup(String newGroup) {
+		this.listGroup.add(newGroup);
 	}
 	
-	public void removeInListGroup(String newChannel) {
-		listGroup.remove(newChannel);
+	public Boolean checkExistingGroup(String group) {
+		for(String existingGroup : this.listGroup) {
+			if(existingGroup.equals(group)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public void removeInListGroup(String newGroup) {
+		listGroup.remove(newGroup);
 	}
 }
 
