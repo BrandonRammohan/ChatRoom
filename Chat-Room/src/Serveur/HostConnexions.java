@@ -16,7 +16,7 @@ public class HostConnexions extends Thread {
 	
 	public HostConnexions(Socket OurSocket,ServeurLaunch OurServer)
 	{
-		super("HostConnexions");//server connection thread
+		super("HostConnexions");
 		this.socket=OurSocket;
 		this.server=OurServer;
 	}
@@ -26,7 +26,7 @@ public class HostConnexions extends Thread {
 		try {
 			long ThreadID=this.getId();
 			dataOut.writeUTF(OutText);
-			dataOut.flush();//this is because of a buffer error :<
+			dataOut.flush();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -11,7 +11,7 @@ public class Controller_Thread extends Thread {
 	
 	private Socket socket;
 	private DataInputStream dataIn;
-	public DataOutputStream dataOut;
+	private DataOutputStream dataOut;
 	private Boolean exit = false;
 	private Model_ClientData modelClient;
 	private View_ChatRoom viewChat;
@@ -22,7 +22,21 @@ public class Controller_Thread extends Thread {
 		this.socket = clientSocket;
 		this.modelClient = new Model_ClientData();
 		this.viewChat = view;
-		this.sauvegarde = new SaveInFile() ;	
+		this.sauvegarde = new SaveInFile();
+		
+		try {
+			this.dataOut=new DataOutputStream(this.socket.getOutputStream());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			dataIn=new DataInputStream(this.socket.getInputStream());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 	
 /**************** Sends data to the server about user's interaction with the chat ****************/
@@ -34,13 +48,13 @@ public class Controller_Thread extends Thread {
 			{
 				dataOut.writeUTF(data);
 				dataOut.flush();
-				sauvegarde.writeUsersInFile(modelClient.getName(), modelClient.getGroupSelected());
+				sauvegarde.writeUsersInFile(modelClient.getPseudo(), modelClient.getGroupSelected());
 			}
 			else if(data.equals("new user"))
 			{
-				dataOut.writeUTF(data+":"+modelClient.getName()+"="+modelClient.getChannel());
+				dataOut.writeUTF(data+":"+modelClient.getPseudo()+"="+modelClient.getGroup());
 				dataOut.flush();
-				sauvegarde.writeUsersInFile(modelClient.getName(), modelClient.getGroupSelected());
+				sauvegarde.writeUsersInFile(modelClient.getPseudo(), modelClient.getGroupSelected());
 			}
 			else if(data.matches("group selected : (.*)"))
 			{
@@ -56,7 +70,7 @@ public class Controller_Thread extends Thread {
 			}
 			else
 			{
-				String message = modelClient.getChannel()+"="+this.getName()+": "+data;
+				String message = modelClient.getGroup()+"="+this.getName()+": "+data;
 				dataOut.writeUTF(message);
 				dataOut.flush();
 				saveMessageInFile(message);
@@ -129,7 +143,7 @@ public class Controller_Thread extends Thread {
 		}
 	}
 	
-/**************** Call from View to Model ****************/
+/**************** Call from View to Model or Test to Model****************/
 	
 	public void setClient(String newGroup,String newPseudo) {
 		modelClient.setPseudo(newPseudo);
@@ -151,6 +165,22 @@ public class Controller_Thread extends Thread {
 	
 	public Boolean call_checkExistingGroup(String group) {
 		return modelClient.checkExistingGroup(group);
+	}
+	
+	public String call_getPseudo() {
+		return modelClient.getPseudo();
+	}
+	
+	public String call_getGroup() {
+		return modelClient.getGroup();
+	}
+	
+	public String call_getGroupSelected() {
+		return modelClient.getGroupSelected();
+	}
+	
+	public ArrayList<String> call_getListGroup() {
+		return modelClient.getListGroup();
 	}
 	
 /**********************************************************/

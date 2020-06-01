@@ -22,10 +22,8 @@ public class View_ChatRoom extends JFrame {
 	private JTextField groupe;
 	private JTextArea conv;
 	private JTextArea participants;
-	//private JTextArea conversations;
 	private Container chat;
-	Controller_Thread clientThread;
-	public Model_ClientData client;
+	private Controller_Thread clientThread;
 	private JLabel l_groupe;
 	private JLabel l_pseudo;
 	private JButton buttonGeneric;
@@ -39,14 +37,6 @@ public class View_ChatRoom extends JFrame {
 		panel = new JPanel();
 		getContentPane().add(panel);
 		panel.setLayout(new GridLayout(0, 1, 0, 0));
-		
-		
-//		this.conversations = new JTextArea(30, 10);
-//		JScrollPane scrollPane4 = new JScrollPane(this.conversations); 
-//		conversations.setEditable(false);
-//		conversations.append("channel0"+ newline);
-//		
-//		getContentPane().add(scrollPane4);
 		
 		this.conv = new JTextArea(30, 30);
 		JScrollPane scrollPane = new JScrollPane(conv); 

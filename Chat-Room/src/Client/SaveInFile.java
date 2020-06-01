@@ -55,7 +55,7 @@ public class SaveInFile {
 	
 	public void writeUsersInFile(String user, String group) {
 		try  {
-			BufferedWriter out = new BufferedWriter(new FileWriter("users-"+group+".txt", true));
+			BufferedWriter out = new BufferedWriter(new FileWriter(this.getfileName(), true));
 			out.write(user +"\n");
 			out.close();
 		} catch (IOException e) {

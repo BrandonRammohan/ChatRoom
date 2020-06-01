@@ -22,16 +22,21 @@ public class Model_ClientData
 		this.groupSelected = newGroupSelected;
 	}
 	
-	public String getChannel() {
-		return group;
+	
+	public String getPseudo() {
+		return pseudo;
 	}
 	
-	public String getName() {
-		return pseudo;
+	public String getGroup() {
+		return group;
 	}
 	
 	public String getGroupSelected() {
 		return groupSelected;
+	}
+	
+	public ArrayList<String> getListGroup() {
+		return listGroup;
 	}
 	
 	public void addInListGroup(String newGroup) {
@@ -47,8 +52,5 @@ public class Model_ClientData
 		return false;
 	}
 	
-	public void removeInListGroup(String newGroup) {
-		listGroup.remove(newGroup);
-	}
 }
 
