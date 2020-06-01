@@ -24,7 +24,7 @@ Membres du groupe et rôles :
     - Responsable du script Maven
     
     
-Outils utilisé :
+Outils utilisés :
 - IDE Eclipse
 - GitHub
 - Trello
